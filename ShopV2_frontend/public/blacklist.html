@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Чорний список</title>
+    <style>
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        .blacklisted-user { border: 1px solid red; padding: 10px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <h1>Чорний список користувачів</h1>
+            <div>
+                <span id="userGreeting"></span>
+                <button onclick="logout()">Вийти</button>
+            </div>
+        </div>
+
+        <p><strong>Ця сторінка доступна лише для адміністратора!</strong></p>
+
+        <div id="blacklistContainer"></div>
+
+        <a href="index.html">Головна</a>
+    </div>
+
+    <script type="module">
+        const token = localStorage.getItem("access_token");
+
+        if (!token) {
+            window.location.href = "login.html";
+        }
+
+        const headers = {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        };
+
+        const blacklistContainer = document.getElementById("blacklistContainer");
+        const userGreeting = document.getElementById("userGreeting");
+
+        async function loadBlacklist() {
+            try {
+                const response = await fetch("http://localhost:8000/api/blacklist/", {
+                    headers
+                });
+
+                if (!response.ok) {
+                    throw new Error("Помилка авторизації або доступу");
+                }
+
+                const data = await response.json();
+
+                blacklistContainer.innerHTML = data.map(entry => `
+                    <div class="blacklisted-user">
+                        <p><strong>Користувач:</strong> ${entry.username}</p>
+                        <p><strong>Причина:</strong> ${entry.reason}</p>
+                        <p><strong>Дата:</strong> ${new Date(entry.created_at).toLocaleString("uk-UA")}</p>
+                    </div>
+                `).join("");
+
+                userGreeting.textContent = "Привіт, адміністраторе! 💫";
+
+            } catch (error) {
+                blacklistContainer.innerHTML = `<p style="color:red;">${error.message}</p>`;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("access_token");
+            window.location.href = "login.html";
+        }
+
+        loadBlacklist();
+    </script>
+</body>
+</html>
