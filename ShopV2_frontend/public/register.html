@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Реєстрація</title>
+    <style>
+        .top-bar { display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 800px; margin: auto; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Реєстрація</h1>
+
+        <div id="error" class="error"></div>
+
+        <form id="registerForm">
+            <label>
+                Логін:
+                <input type="text" name="username" id="username" required>
+            </label><br><br>
+
+            <label>
+                Пароль:
+                <input type="password" name="password" id="password" required>
+            </label><br><br>
+
+            <button type="submit">Зареєструватися</button>
+        </form>
+
+        <p>Вже маєте акаунт?</p>
+        <a href="login.html"><button>Увійти</button></a>
+    </div>
+
+    <script type="module">
+        const form = document.getElementById("registerForm");
+        const errorDiv = document.getElementById("error");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            errorDiv.textContent = "";
+
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch("http://localhost:8000/api/auth/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                if (response.ok) {
+                    window.location.href = "login.html";
+                } else {
+                    const data = await response.json();
+                    errorDiv.textContent = data.detail || "Помилка реєстрації";
+                }
+            } catch (error) {
+                console.error("Network error:", error);
+                errorDiv.textContent = "Не вдалося з'єднатися з сервером";
+            }
+        });
+    </script>
+</body>
+</html>
