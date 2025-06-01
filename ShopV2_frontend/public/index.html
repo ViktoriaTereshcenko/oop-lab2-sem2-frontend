@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Головна сторінка</title>
+    <style>
+        .top-bar { display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 800px; margin: auto; }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h1>Головна сторінка</h1>
+        <div>
+            <span id="greeting">Привіт! 💫</span>
+            <button onclick="logout()">Вийти</button>
+        </div>
+    </div>
+    <ul>
+        <li><a href="/add.html">Додати продукт</a></li>
+        <li><a href="/orders.html">Мої замовлення</a></li>
+    </ul>
+
+    <script type="module">
+        import { protectPage } from "../src/protect.js";
+        import { logout } from "../src/auth.js";
+
+        protectPage();
+        window.logout = logout;
+    </script>
+</body>
+</html>
