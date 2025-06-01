@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Вхід</title>
+    <style>
+        .top-bar { display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 800px; margin: auto; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Увійти в систему</h1>
+
+        <form id="login-form">
+            <label>
+                Ім’я користувача:
+                <input type="text" name="username" required autofocus>
+            </label><br><br>
+
+            <label>
+                Пароль:
+                <input type="password" name="password" required>
+            </label><br><br>
+
+            <button type="submit">Увійти</button>
+        </form>
+
+        <p id="error-message" class="error"></p>
+
+        <p>Ще не маєте акаунта?</p>
+        <a href="/register.html"><button>Зареєструватися</button></a>
+    </div>
+
+    <script type="module">
+        import { login } from "../src/auth.js";
+
+        const form = document.getElementById("login-form");
+        const errorMessage = document.getElementById("error-message");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const username = formData.get("username");
+            const password = formData.get("password");
+
+            try {
+                await login(username, password);
+            } catch (err) {
+                errorMessage.textContent = "Неправильне ім’я користувача або пароль.";
+            }
+        });
+    </script>
+</body>
+</html>
