@@ -1,0 +1,12 @@
+{
+  "name": "frontend-shop",
+  "version": "1.0.0",
+  "description": "Frontend частина другої лабораторної з ООП",
+  "scripts": {
+    "start": "live-server public"
+  },
+  "type": "module",
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}
