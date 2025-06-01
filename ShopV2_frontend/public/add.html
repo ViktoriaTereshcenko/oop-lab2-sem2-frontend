@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Додати продукт</title>
+    <style>
+        .top-bar { display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 800px; margin: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <h1>Додати новий продукт</h1>
+            <div>
+                <button onclick="logout()">Вийти</button>
+            </div>
+        </div>
+
+        <form id="product-form">
+            <label>Назва:<br><input type="text" name="name" required></label><br><br>
+            <label>Опис:<br><textarea name="description"></textarea></label><br><br>
+            <label>Ціна:<br><input type="number" name="price" step="0.01" required></label><br><br>
+            <button type="submit">Додати продукт</button>
+        </form>
+
+        <p id="status"></p>
+        <a href="/index.html">Назад</a>
+    </div>
+
+    <script type="module">
+        import { protectPage } from "../src/protect.js";
+        import { logout } from "../src/auth.js";
+        import { addProduct } from "../src/api.js";
+
+        protectPage();
+        window.logout = logout;
+
+        const form = document.getElementById("product-form");
+        const status = document.getElementById("status");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const product = {
+                name: formData.get("name"),
+                description: formData.get("description"),
+                price: parseFloat(formData.get("price"))
+            };
+            try {
+                await addProduct(product);
+                status.textContent = "Продукт успішно додано";
+                form.reset();
+            } catch (err) {
+                status.textContent = "Помилка при додаванні продукту";
+            }
+        });
+    </script>
+</body>
+</html>
